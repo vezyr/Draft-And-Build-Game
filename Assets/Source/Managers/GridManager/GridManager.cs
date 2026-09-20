@@ -2,7 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using UnityEngine.InputSystem;
 
-namespace Managers.GridManager
+namespace DB.Managers.GridManager
 {
 	public class GridManager : MonoBehaviour
 	{
