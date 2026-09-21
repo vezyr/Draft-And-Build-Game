@@ -30,6 +30,37 @@ namespace DB.DependencyInjection
             }
         }
 
+        private void Start()
+        {
+            Dictionary<Type, List<MethodInfo>> methodsCache = new Dictionary<Type, List<MethodInfo>>();
+            Object[] instances = UnityEngine.Object.FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);
+            foreach (var instance in instances)
+            {
+                Type instanceType = instance.GetType();
+
+                if (!methodsCache.ContainsKey(instanceType))
+                {
+                    List<MethodInfo> methodsWithInjectAttribute = instanceType
+                        .GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance)
+                        .Where(method => method.IsDefined(typeof(InjectAttribute), false))
+                        .ToList();
+                    methodsCache[instanceType] = methodsWithInjectAttribute;
+                }
+                
+                List<MethodInfo> methodsToProcess = methodsCache[instanceType];
+                foreach (var method in methodsToProcess)
+                {
+                    InjectAttribute injectAttribute = method.GetCustomAttribute<InjectAttribute>();
+                    if (injectAttribute.ComponentType != null)
+                    {
+                        throw new NotImplementedException("Component type injection is not implemented yet.");
+                    }
+                    InjectableEntry entry = _container.Get(injectAttribute.ComponentName, injectAttribute.GameObjectName);
+                    method.Invoke(instance, new[] { entry.Component });
+                }
+            }
+        }
+
         private void TryBind(Object instance, InjectableAttribute injectableAttribute, Type type)
         {
             if (!(instance is Component))

@@ -280,13 +280,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 657361201}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.53729963, y: 0, z: 0, w: 0.8433915}
-  m_LocalPosition: {x: 0, y: 21.79, z: -11.04}
+  m_LocalRotation: {x: 0.5735764, y: 0, z: 0, w: 0.8191521}
+  m_LocalPosition: {x: 6, y: 13, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 65, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 70, y: 0, z: 0}
 --- !u!1 &988486000
 GameObject:
   m_ObjectHideFlags: 0
@@ -616,6 +616,10 @@ PrefabInstance:
       propertyPath: _groundPlaneObject
       value: 
       objectReference: {fileID: 0}
+    - target: {fileID: 6505008370715974550, guid: 0a06f92e17efb42fdae3c3f65db32cc9, type: 3}
+      propertyPath: _gridTileSelectorPrefab
+      value: 
+      objectReference: {fileID: 2081820422669281487, guid: e78aa7f6f734347e6be34a188cd8d7b0, type: 3}
     - target: {fileID: 6505008370715974550, guid: 0a06f92e17efb42fdae3c3f65db32cc9, type: 3}
       propertyPath: _mousePositionActionReference
       value: 

@@ -44,3 +44,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85e3dc2a8dbf04c26bfe82da83329734, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DB.Manager.InputManager.NewInputSystemInputManager
+  _mousePositionActionReference: {fileID: 2594232767437211876, guid: 052faaac586de48259a63d0c4782560b, type: 3}

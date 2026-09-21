@@ -1,26 +1,29 @@
+using System;
 using DB.DependencyInjection.Attributes;
 using UnityEngine;
+using UnityEngine.InputSystem;
 
 namespace DB.Manager.InputManager
 {
     [Injectable(singleton: true)]
     public class NewInputSystemInputManager : MonoBehaviour, IInputManager
     {
-        // Start is called once before the first execution of Update after the MonoBehaviour is created
-        void Start()
+        private bool _isMousePositionActionReferenceSet = false;
+        [SerializeField] private InputActionReference _mousePositionActionReference;
+
+        void Awake()
         {
-
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-
+            _isMousePositionActionReferenceSet =
+                _mousePositionActionReference != null && _mousePositionActionReference.action != null;
         }
 
         public Vector2 GetMousePosition()
         {
-            throw new System.NotImplementedException();
+            if (!_isMousePositionActionReferenceSet)
+            {
+                return Vector2.zero;
+            }
+            return _mousePositionActionReference.action.ReadValue<Vector2>();
         }
     }
 }

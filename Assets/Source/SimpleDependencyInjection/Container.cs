@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace DB.DependencyInjection
@@ -36,6 +37,21 @@ namespace DB.DependencyInjection
                 $"{componentName}.{gameObjectName}", 
                 new InjectableEntry(componentName, gameObjectName, component.gameObject.GetInstanceID(), component)
             );
+        }
+
+        public InjectableEntry Get(string componentName, string gameObjectName = null)
+        {
+            string keyToFind = $"{componentName}.";
+            if (!string.IsNullOrEmpty(gameObjectName))
+            {
+                keyToFind += gameObjectName;
+            }
+            var match = _entries.SingleOrDefault(e => e.Key.StartsWith(keyToFind));
+            if (match.Key != null)
+            {
+                return match.Value;
+            }
+            throw new Exception("Could not inject component! Component not bound: " + componentName);
         }
     }
 }
