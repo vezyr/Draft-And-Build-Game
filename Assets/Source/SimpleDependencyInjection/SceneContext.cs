@@ -11,7 +11,7 @@ namespace DB.DependencyInjection
     public class SceneContext : MonoBehaviour
     {
         private readonly Container _container = new Container();
-        private void OnEnable()
+        private void Awake()
         {
             var injectables = AppDomain.CurrentDomain.GetAssemblies()
                 .SelectMany(assembly => assembly.GetTypes())

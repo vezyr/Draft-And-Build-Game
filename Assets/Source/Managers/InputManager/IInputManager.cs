@@ -1,9 +1,14 @@
+using System;
 using UnityEngine;
 
-namespace DB.Manager.InputManager
+namespace DB.Managers.InputManager
 {
     public interface IInputManager
     {
-        Vector2 GetMousePosition();
+        public event Action OnBuildActionPerformed;
+        // @todo: Move it to dedicated CheatManager
+        public event Action OnCheatBuildHouseActionPerformed;
+        
+        public Vector2 GetMousePosition();
     }
 }

@@ -1,16 +1,19 @@
 using UnityEngine;
 using System.Collections.Generic;
+using DB.Datas;
 using DB.DependencyInjection.Attributes;
-using DB.Manager.InputManager;
+using DB.Managers.InputManager;
 
 namespace DB.Managers.GridManager
 {
+	[RequireComponent(typeof(BuildController))]
 	public class GridManager : MonoBehaviour
 	{
-		private readonly Dictionary<Vector2Int, int> _grid = new Dictionary<Vector2Int, int>();
+		private readonly Dictionary<Vector2Int, BuildingDefinition> _grid = new Dictionary<Vector2Int, BuildingDefinition>();
 		private Camera _mainCamera;
 		private Plane _groundPlane;
 		private float _gridTileSize;
+		private BuildController _buildController;
 		
 		[SerializeField] private GameObject _gridTilePrefab;
 		[SerializeField] private GameObject _gridTileSelector;
@@ -20,56 +23,23 @@ namespace DB.Managers.GridManager
 		
 		private IInputManager _inputManager;
 		
-		void Start()
+		private void Start()
 		{
 			_mainCamera = Camera.main;
 			_groundPlane = new Plane(Vector3.up, Vector3.zero);
+			_buildController = GetComponent<BuildController>();
 			CalculateGridTileSize();
 			GenerateGrid();
 		}
 
-		void Update()
+		private void Update()
 		{
-			Ray ray = _mainCamera.ScreenPointToRay(_inputManager.GetMousePosition());
-			if (_groundPlane.Raycast(ray, out float distance))
+			if (_buildController.IsPlacingBuilding)
 			{
-				Vector3 hitPoint = ray.GetPoint(distance);
-				Vector2Int hoveredTile;
-				if (!TryCalculateHoveredTile(hitPoint, out hoveredTile))
-				{
-					SetGridTileSelectorActive(false);
-				}
-				else
-				{
-					SetGridTileSelectorActive(true);
-					// @todo: move calculation to separated method and use it in all places.
-					_gridTileSelector.transform.position = new Vector3(
-						hoveredTile.x * _gridTileSize + _gridTileSpacing * hoveredTile.x,
-						0,
-						hoveredTile.y * _gridTileSize + _gridTileSpacing * hoveredTile.y
-					);
-				}
-			}
-			else
-			{
-				SetGridTileSelectorActive(false);
+				HighlightHoveredTile();
 			}
 		}
-
-		private bool TryCalculateHoveredTile(Vector3 hitPoint, out Vector2Int tileCoordinates)
-		{
-			int x = Mathf.FloorToInt(hitPoint.x / (_gridTileSize + _gridTileSpacing));
-			int y = Mathf.FloorToInt(hitPoint.z / (_gridTileSize + _gridTileSpacing));
-
-			if (x < 0 || x >= _gridDimensions.x || y < 0 || y >= _gridDimensions.y)
-			{
-				tileCoordinates = new Vector2Int(-1, -1);
-				return false;
-			}
-			tileCoordinates = new Vector2Int(x, y);
-			return true;
-		}
-
+		
 		private void CalculateGridTileSize()
 		{
 			BoxCollider gridTileBoxCollider = _gridTilePrefab.GetComponentInChildren<BoxCollider>();
@@ -101,6 +71,7 @@ namespace DB.Managers.GridManager
 					{
 						tile.transform.parent = _gridContainer.transform;
 					}
+					_grid.Add(new Vector2Int(x, y), null);
 				}
 			}
 		}
@@ -109,15 +80,57 @@ namespace DB.Managers.GridManager
 		{
 			GameObject tile = Instantiate(
 				_gridTilePrefab,
-				new Vector3(
-					x * _gridTileSize + _gridTileSpacing * x,
-					0,
-					y * _gridTileSize + _gridTileSpacing * y
-				),
+				GetTilePosition(x, y),
 				Quaternion.identity
 			);
 			tile.name = $"GridTile_{x}_{y}";
 			return tile;
+		}
+
+		private Vector3 GetTilePosition(int x, int y)
+		{
+			return new Vector3(
+				x * _gridTileSize + _gridTileSpacing * x,
+				0,
+				y * _gridTileSize + _gridTileSpacing * y
+			);
+		}
+
+		private void HighlightHoveredTile()
+		{
+			Ray ray = _mainCamera.ScreenPointToRay(_inputManager.GetMousePosition());
+			if (_groundPlane.Raycast(ray, out float distance))
+			{
+				Vector3 hitPoint = ray.GetPoint(distance);
+				Vector2Int hoveredTile;
+				if (TryCalculateHoveredTile(hitPoint, out hoveredTile))
+				{
+					SetGridTileSelectorActive(true);
+					_gridTileSelector.transform.position = GetTilePosition(hoveredTile.x, hoveredTile.y);
+				}
+				else
+				{
+					SetGridTileSelectorActive(false);
+				}
+			}
+			else
+			{
+				SetGridTileSelectorActive(false);
+			}
+		}
+		
+		private bool TryCalculateHoveredTile(Vector3 hitPoint, out Vector2Int tileCoordinates)
+		{
+			int x = Mathf.FloorToInt(hitPoint.x / (_gridTileSize + _gridTileSpacing));
+			int y = Mathf.FloorToInt(hitPoint.z / (_gridTileSize + _gridTileSpacing));
+
+			if (x < 0 || x >= _gridDimensions.x || y < 0 || y >= _gridDimensions.y)
+			{
+				tileCoordinates = new Vector2Int(-1, -1);
+				return false;
+			}
+			tileCoordinates = new Vector2Int(x, y);
+			return true;
 		}
 
 		private void SetGridTileSelectorActive(bool active)

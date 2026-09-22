@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1830398496947339706}
   - component: {fileID: 6505008370715974550}
+  - component: {fileID: 1420846332538092954}
   m_Layer: 0
   m_Name: GridManager
   m_TagString: Untagged
@@ -50,6 +51,18 @@ MonoBehaviour:
   _gridContainer: {fileID: 0}
   _gridDimensions: {x: 0, y: 0}
   _gridTileSpacing: 0.3
+--- !u!114 &1420846332538092954
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1958447140191613139}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d89c2567bbb8f4b8a9685f794dc8a0e4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DB.Managers.GridManager.BuildController
 --- !u!1001 &8264073160559615292
 PrefabInstance:
   m_ObjectHideFlags: 0

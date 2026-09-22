@@ -1,0 +1,103 @@
+{
+    "version": 1,
+    "name": "InputActionsMappings",
+    "maps": [
+        {
+            "name": "InGameActions",
+            "id": "52aa8118-8564-4ce9-a103-24d33fc967b0",
+            "actions": [
+                {
+                    "name": "MousePosition",
+                    "type": "Value",
+                    "id": "df63b44b-f965-4843-8ca0-59f844c62700",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true,
+                    "priority": 0
+                },
+                {
+                    "name": "Build",
+                    "type": "Button",
+                    "id": "57fe4fea-18d1-4733-919c-9e6f665bf718",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "82af8d86-393b-4192-9b7f-1ca9f7ca72b3",
+                    "path": "<Mouse>/position",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Mouse And Keybord",
+                    "action": "MousePosition",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "3d2c9a82-17bf-44e2-8647-9fdf8a9d8267",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Mouse And Keybord",
+                    "action": "Build",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        },
+        {
+            "name": "CheatActions",
+            "id": "78b13dfd-539a-4fba-bd4b-56ad14cdb89c",
+            "actions": [
+                {
+                    "name": "SelectBuildHouse",
+                    "type": "Button",
+                    "id": "b38b0b79-46a3-42d4-8da0-e4ac89a70373",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
+                }
+            ],
+            "bindings": [
+                {
+                    "name": "",
+                    "id": "15204787-1a25-4a74-acce-a908de5bc3e4",
+                    "path": "<Keyboard>/1",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Mouse And Keybord",
+                    "action": "SelectBuildHouse",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                }
+            ]
+        }
+    ],
+    "controlSchemes": [
+        {
+            "name": "Mouse And Keybord",
+            "bindingGroup": "Mouse And Keybord",
+            "devices": [
+                {
+                    "devicePath": "<Mouse>",
+                    "isOptional": false,
+                    "isOR": false
+                },
+                {
+                    "devicePath": "<Keyboard>",
+                    "isOptional": false,
+                    "isOR": false
+                }
+            ]
+        }
+    ]
+}
