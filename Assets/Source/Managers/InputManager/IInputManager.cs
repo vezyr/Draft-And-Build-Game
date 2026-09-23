@@ -10,5 +10,8 @@ namespace DB.Managers.InputManager
         public event Action OnCheatBuildHouseActionPerformed;
         
         public Vector2 GetMousePosition();
+        
+        public void EnableAction(ActionId id);
+        public void DisableAction(ActionId id);
     }
 }

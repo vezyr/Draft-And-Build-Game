@@ -9,6 +9,8 @@ namespace DB.Managers.GridManager
 	[RequireComponent(typeof(BuildController))]
 	public class GridManager : MonoBehaviour
 	{
+		public Vector2Int? HoveredTileCoordinates { get; private set; }
+		
 		private readonly Dictionary<Vector2Int, BuildingDefinition> _grid = new Dictionary<Vector2Int, BuildingDefinition>();
 		private Camera _mainCamera;
 		private Plane _groundPlane;
@@ -38,6 +40,36 @@ namespace DB.Managers.GridManager
 			{
 				HighlightHoveredTile();
 			}
+			else
+			{
+				if (_gridTileSelector.activeSelf)
+				{
+					HoveredTileCoordinates = null;
+					SetGridTileSelectorActive(false);
+				}
+			}
+		}
+		
+		public Vector3 GetTilePosition(int x, int y)
+		{
+			return new Vector3(
+				x * _gridTileSize + _gridTileSpacing * x,
+				0,
+				y * _gridTileSize + _gridTileSpacing * y
+			);
+		}
+		
+		public bool IsTileEmpty(Vector2Int coordinates) => _grid[coordinates] == null;
+
+		public bool TryPlaceBuildingOnTile(Vector2Int coordinates, BuildingDefinition buildingDefinition)
+		{
+			if (!IsTileEmpty(coordinates))
+			{
+				Debug.LogError($"Can not place build on tile {coordinates}. Tile already occupied!");
+				return false;
+			}
+			_grid[coordinates] = buildingDefinition;
+			return true;
 		}
 		
 		private void CalculateGridTileSize()
@@ -86,24 +118,29 @@ namespace DB.Managers.GridManager
 			tile.name = $"GridTile_{x}_{y}";
 			return tile;
 		}
-
-		private Vector3 GetTilePosition(int x, int y)
-		{
-			return new Vector3(
-				x * _gridTileSize + _gridTileSpacing * x,
-				0,
-				y * _gridTileSize + _gridTileSpacing * y
-			);
-		}
-
+		
 		private void HighlightHoveredTile()
 		{
 			Ray ray = _mainCamera.ScreenPointToRay(_inputManager.GetMousePosition());
 			if (_groundPlane.Raycast(ray, out float distance))
 			{
-				Vector3 hitPoint = ray.GetPoint(distance);
-				Vector2Int hoveredTile;
-				if (TryCalculateHoveredTile(hitPoint, out hoveredTile))
+				HandeRaycastHit(ray, distance);
+			}
+			else
+			{
+				HoveredTileCoordinates = null;
+				SetGridTileSelectorActive(false);
+			}
+		}
+
+		private void HandeRaycastHit(Ray ray, float distance)
+		{
+			Vector3 hitPoint = ray.GetPoint(distance);
+			Vector2Int hoveredTile;
+			if (TryCalculateHoveredTile(hitPoint, out hoveredTile))
+			{
+				HoveredTileCoordinates = hoveredTile;
+				if (IsTileEmpty(hoveredTile))
 				{
 					SetGridTileSelectorActive(true);
 					_gridTileSelector.transform.position = GetTilePosition(hoveredTile.x, hoveredTile.y);
@@ -115,6 +152,7 @@ namespace DB.Managers.GridManager
 			}
 			else
 			{
+				HoveredTileCoordinates = null;
 				SetGridTileSelectorActive(false);
 			}
 		}

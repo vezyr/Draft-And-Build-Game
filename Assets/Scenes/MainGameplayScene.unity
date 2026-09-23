@@ -523,6 +523,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DeckManager
       objectReference: {fileID: 0}
+    - target: {fileID: 7897902701687144500, guid: 1c393011359c1435c8fd8e4fab9f2b41, type: 3}
+      propertyPath: houseBuildingDefinition
+      value: 
+      objectReference: {fileID: 11400000, guid: 354ade422587b4581a7626be7cc01de8, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
@@ -580,6 +584,30 @@ PrefabInstance:
       propertyPath: _test.m_Name
       value: Test
       objectReference: {fileID: 0}
+    - target: {fileID: 7890195914943930060, guid: f067a63456b274e71a9304ace1be4892, type: 3}
+      propertyPath: _actionBindings.Array.size
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 7890195914943930060, guid: f067a63456b274e71a9304ace1be4892, type: 3}
+      propertyPath: _actionBindings.Array.data[1].Id
+      value: 10
+      objectReference: {fileID: 0}
+    - target: {fileID: 7890195914943930060, guid: f067a63456b274e71a9304ace1be4892, type: 3}
+      propertyPath: _actionBindings.Array.data[2].Id
+      value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 7890195914943930060, guid: f067a63456b274e71a9304ace1be4892, type: 3}
+      propertyPath: _actionBindings.Array.data[0].Reference
+      value: 
+      objectReference: {fileID: 7280813010368415452, guid: 803dbb7b57ac543fca0ac84fbca3f177, type: 3}
+    - target: {fileID: 7890195914943930060, guid: f067a63456b274e71a9304ace1be4892, type: 3}
+      propertyPath: _actionBindings.Array.data[1].Reference
+      value: 
+      objectReference: {fileID: -3477444390119506692, guid: 803dbb7b57ac543fca0ac84fbca3f177, type: 3}
+    - target: {fileID: 7890195914943930060, guid: f067a63456b274e71a9304ace1be4892, type: 3}
+      propertyPath: _actionBindings.Array.data[2].Reference
+      value: 
+      objectReference: {fileID: -6601921819237529014, guid: 803dbb7b57ac543fca0ac84fbca3f177, type: 3}
     - target: {fileID: 7890195914943930060, guid: f067a63456b274e71a9304ace1be4892, type: 3}
       propertyPath: onBuildActionPerformed.m_PersistentCalls.m_Calls.Array.size
       value: 1
