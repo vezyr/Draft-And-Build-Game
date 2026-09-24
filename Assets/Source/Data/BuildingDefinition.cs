@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace DB.Datas
+namespace DB.Data
 {
     [CreateAssetMenu(fileName = "BuildingDefinition", menuName = "Scriptable Objects/BuildingDefinition")]
     public class BuildingDefinition : ScriptableObject

@@ -1,5 +1,5 @@
 using System;
-using DB.Datas;
+using DB.Data;
 using DB.DependencyInjection.Attributes;
 using DB.Managers.InputManager;
 using UnityEngine;

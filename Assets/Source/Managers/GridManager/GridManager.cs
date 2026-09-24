@@ -1,6 +1,6 @@
 using UnityEngine;
 using System.Collections.Generic;
-using DB.Datas;
+using DB.Data;
 using DB.DependencyInjection.Attributes;
 using DB.Managers.InputManager;
 
