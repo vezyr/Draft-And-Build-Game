@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DB.Datas.BuildingDefinition
   DisplayName: Farm
   BaseScore: 2
+  GameObjectPrefab: {fileID: 4057342342554860046, guid: 0c6088bf20c6c4b1b975c7f50f0faf8b, type: 3}

@@ -1,15 +1,26 @@
+using System;
 using UnityEngine;
 using System.Collections.Generic;
+using System.Linq;
 using DB.Data;
 using DB.DependencyInjection.Attributes;
 using DB.Managers.InputManager;
 
 namespace DB.Managers.GridManager
 {
+	public struct Neighborhood
+	{
+		public BuildingDefinition Left;
+		public BuildingDefinition Right;
+		public BuildingDefinition Top;
+		public BuildingDefinition Bottom;
+	}
+	
 	[RequireComponent(typeof(BuildController))]
 	public class GridManager : MonoBehaviour
 	{
 		public Vector2Int? HoveredTileCoordinates { get; private set; }
+		public Action<Vector2Int?> OnHoveredTileChange;
 		
 		private readonly Dictionary<Vector2Int, BuildingDefinition> _grid = new Dictionary<Vector2Int, BuildingDefinition>();
 		private Camera _mainCamera;
@@ -24,28 +35,41 @@ namespace DB.Managers.GridManager
 		[SerializeField] private float _gridTileSpacing = 0.3f;
 		
 		private IInputManager _inputManager;
+
+		private void Awake()
+		{
+			CalculateGridTileSize();
+			GenerateGrid();
+		}
 		
 		private void Start()
 		{
 			_mainCamera = Camera.main;
 			_groundPlane = new Plane(Vector3.up, Vector3.zero);
 			_buildController = GetComponent<BuildController>();
-			CalculateGridTileSize();
-			GenerateGrid();
+		}
+
+		private void OnEnable()
+		{
+			OnHoveredTileChange += HandleHoveredTileChange;
+		}
+
+		private void OnDisable()
+		{
+			OnHoveredTileChange -= HandleHoveredTileChange;
 		}
 
 		private void Update()
 		{
 			if (_buildController.IsPlacingBuilding)
 			{
-				HighlightHoveredTile();
+				HandleTileHovering();
 			}
 			else
 			{
 				if (_gridTileSelector.activeSelf)
 				{
-					HoveredTileCoordinates = null;
-					SetGridTileSelectorActive(false);
+					HandleHoveredTileChange(null);
 				}
 			}
 		}
@@ -65,10 +89,46 @@ namespace DB.Managers.GridManager
 		{
 			if (!IsTileEmpty(coordinates))
 			{
-				Debug.LogError($"Can not place build on tile {coordinates}. Tile already occupied!");
+				Debug.Log($"Can not place build on tile {coordinates}. Tile already occupied!");
 				return false;
 			}
 			_grid[coordinates] = buildingDefinition;
+			return true;
+		}
+
+		public int NumberOfFreeTiles()
+		{
+			return _grid.Count(e => e.Value == null);
+		}
+
+		public Neighborhood GetNeighborhood(Vector2Int coordinates)
+		{
+			return new Neighborhood()
+			{
+				Left = TryGetTile(new Vector2Int(coordinates.x - 1, coordinates.y), out BuildingDefinition leftTile)
+					? leftTile
+					: null,
+				Right = TryGetTile(new Vector2Int(coordinates.x + 1, coordinates.y), out BuildingDefinition rightTile)
+					? rightTile
+					: null,
+				Top = TryGetTile(new Vector2Int(coordinates.x, coordinates.y + 1), out BuildingDefinition topTile)
+					? topTile
+					: null,
+				Bottom = TryGetTile(new Vector2Int(coordinates.x, coordinates.y - 1), out BuildingDefinition bottomTile)
+					? bottomTile
+					: null,
+			};
+		}
+
+		private bool TryGetTile(Vector2Int coordinates, out BuildingDefinition buildingDefinition)
+		{
+			if (coordinates.x < 0 || coordinates.x >= _gridDimensions.x || coordinates.y < 0 ||
+			    coordinates.y >= _gridDimensions.y)
+			{
+				buildingDefinition = null;
+				return false;
+			}
+			buildingDefinition = _grid[coordinates];
 			return true;
 		}
 		
@@ -119,7 +179,7 @@ namespace DB.Managers.GridManager
 			return tile;
 		}
 		
-		private void HighlightHoveredTile()
+		private void HandleTileHovering()
 		{
 			Ray ray = _mainCamera.ScreenPointToRay(_inputManager.GetMousePosition());
 			if (_groundPlane.Raycast(ray, out float distance))
@@ -128,8 +188,7 @@ namespace DB.Managers.GridManager
 			}
 			else
 			{
-				HoveredTileCoordinates = null;
-				SetGridTileSelectorActive(false);
+				UpdateHoveredTile(null);
 			}
 		}
 
@@ -139,7 +198,32 @@ namespace DB.Managers.GridManager
 			Vector2Int hoveredTile;
 			if (TryCalculateHoveredTile(hitPoint, out hoveredTile))
 			{
-				HoveredTileCoordinates = hoveredTile;
+				UpdateHoveredTile(hoveredTile);
+			}
+			else
+			{
+				UpdateHoveredTile(null);
+			}
+		}
+
+		private void UpdateHoveredTile(Vector2Int? hoveredTileCoordinates)
+		{
+			if (
+				(!HoveredTileCoordinates.HasValue && !hoveredTileCoordinates.HasValue) ||
+				(HoveredTileCoordinates.HasValue && hoveredTileCoordinates.HasValue && HoveredTileCoordinates.Value == hoveredTileCoordinates.Value)
+			)
+			{
+				return;
+			}
+			HoveredTileCoordinates = hoveredTileCoordinates;
+			OnHoveredTileChange?.Invoke(HoveredTileCoordinates);
+		}
+
+		private void HandleHoveredTileChange(Vector2Int? coordinates)
+		{
+			if (coordinates.HasValue)
+			{
+				Vector2Int hoveredTile = coordinates.Value;
 				if (IsTileEmpty(hoveredTile))
 				{
 					SetGridTileSelectorActive(true);
@@ -152,7 +236,6 @@ namespace DB.Managers.GridManager
 			}
 			else
 			{
-				HoveredTileCoordinates = null;
 				SetGridTileSelectorActive(false);
 			}
 		}
@@ -179,7 +262,7 @@ namespace DB.Managers.GridManager
 			}
 		}
 
-		[Inject(componentName:"NewInputSystemInputManager")]
+		[Inject(componentType:typeof(NewInputSystemInputManager))]
 		private void SetInputManager(IInputManager inputManager)
 		{
 			_inputManager = inputManager;

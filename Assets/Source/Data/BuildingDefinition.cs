@@ -1,3 +1,4 @@
+using DB.Controllers;
 using UnityEngine;
 
 namespace DB.Data
@@ -7,6 +8,6 @@ namespace DB.Data
     {
         public string DisplayName;
         public int BaseScore;
-        public GameObject GameObjectPrefab;
+        public BuildingController GameObjectPrefab;
     }
 }

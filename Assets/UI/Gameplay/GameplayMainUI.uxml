@@ -1,0 +1,13 @@
+<ui:UXML xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" noNamespaceSchemaLocation="../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <ui:VisualElement name="MainContainer" style="flex-grow: 1; flex-direction: column-reverse; align-self: center;">
+        <ui:VisualElement name="CardsContainer" style="flex-grow: 0; flex-direction: row;">
+            <ui:Button text="Button" name="Card1"/>
+            <ui:Button text="Button" name="Card2"/>
+            <ui:Button text="Button" name="Card3"/>
+        </ui:VisualElement>
+        <ui:VisualElement name="ScoreContainer" style="flex-grow: 1; flex-direction: row; align-self: auto; justify-content: center;">
+            <ui:Label text="Score:"/>
+            <ui:Label text="0" name="CurrentScore"/>
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

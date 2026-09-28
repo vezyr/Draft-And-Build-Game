@@ -47,11 +47,22 @@ namespace DB.DependencyInjection
                 keyToFind += gameObjectName;
             }
             var match = _entries.SingleOrDefault(e => e.Key.StartsWith(keyToFind));
-            if (match.Key != null)
+            return match.Key != null ? match.Value : throw new Exception("Could not inject component! Component not bound: " + componentName);
+        }
+
+        public InjectableEntry Get(Type componentType)
+        {
+            if (NumberOfElements(componentType) > 1)
             {
-                return match.Value;
+                throw new Exception("Multiple instances of same type found! Please specify gameobject name to distinguish. " + componentType.Name);
             }
-            throw new Exception("Could not inject component! Component not bound: " + componentName);
+            var match = _entries.SingleOrDefault(e => e.Value.Component.GetType() == componentType);
+            return match.Key != null ? match.Value : throw new Exception("Could not inject component! Component not bound: " + componentType.Name);
+        }
+
+        private int NumberOfElements(Type componentType)
+        {
+            return _entries.Count(e => e.Value.Component.GetType() == componentType);
         }
     }
 }

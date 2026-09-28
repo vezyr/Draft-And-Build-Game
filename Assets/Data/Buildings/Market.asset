@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DB.Data.BuildingDefinition
   DisplayName: Market
   BaseScore: 0
-  GameObjectPrefab: {fileID: 0}
+  GameObjectPrefab: {fileID: 5406353029407200418, guid: 6d0aaaad0a6fc40f399366c11ee655aa, type: 3}

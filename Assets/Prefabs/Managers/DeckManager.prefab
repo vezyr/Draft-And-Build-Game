@@ -44,3 +44,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6e76a8ea49c3944f3830393d5e1dc505, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DB.Managers.DeckManager.DeckManager
+  _deckSize: 40
+  _predefinedDeckDefinition: {fileID: 11400000, guid: c9cbcdb7443474310aa8a7692b658b32, type: 2}
+  houseBuildingDefinition: {fileID: 0}

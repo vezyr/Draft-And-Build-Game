@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DB.Datas.BuildingDefinition
   DisplayName: Well
   BaseScore: 0
+  GameObjectPrefab: {fileID: 4352673843429718362, guid: 3f5cc2999f9f14215920cd383036f662, type: 3}

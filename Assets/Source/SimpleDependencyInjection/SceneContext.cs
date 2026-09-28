@@ -53,10 +53,15 @@ namespace DB.DependencyInjection
                     InjectAttribute injectAttribute = method.GetCustomAttribute<InjectAttribute>();
                     if (injectAttribute.ComponentType != null)
                     {
-                        throw new NotImplementedException("Component type injection is not implemented yet.");
+                        InjectableEntry entry = _container.Get(injectAttribute.ComponentType);
+                        method.Invoke(instance, new[] { entry.Component });
                     }
-                    InjectableEntry entry = _container.Get(injectAttribute.ComponentName, injectAttribute.GameObjectName);
-                    method.Invoke(instance, new[] { entry.Component });
+                    else
+                    {
+                        InjectableEntry entry = _container.Get(injectAttribute.ComponentName,
+                            injectAttribute.GameObjectName);
+                        method.Invoke(instance, new[] { entry.Component });
+                    }
                 }
             }
         }

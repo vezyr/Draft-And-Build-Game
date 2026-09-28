@@ -14,4 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::DB.Data.BuildingDefinition
   DisplayName: Town Hall
   BaseScore: 0
-  GameObjectPrefab: {fileID: 0}
+  GameObjectPrefab: {fileID: 6682647616442612469, guid: 0b252852f56bb48f0b5dcbe40e1018ce, type: 3}
