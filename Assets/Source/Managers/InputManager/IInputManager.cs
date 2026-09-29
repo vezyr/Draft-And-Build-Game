@@ -6,6 +6,7 @@ namespace DB.Managers.InputManager
     public interface IInputManager
     {
         public event Action OnBuildActionPerformed;
+        public event Action OnCancelBuildActionPerformed;
         // @todo: Move it to dedicated CheatManager
         public event Action OnCheatBuildHouseActionPerformed;
         

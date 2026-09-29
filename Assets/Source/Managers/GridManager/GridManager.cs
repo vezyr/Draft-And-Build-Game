@@ -27,9 +27,10 @@ namespace DB.Managers.GridManager
 		private Plane _groundPlane;
 		private float _gridTileSize;
 		private BuildController _buildController;
-		
+
 		[SerializeField] private GameObject _gridTilePrefab;
-		[SerializeField] private GameObject _gridTileSelector;
+		[SerializeField] private GameObject _gridTileSelectorValid;
+		[SerializeField] private GameObject _gridTileSelectorInvalid;
 		[SerializeField] private GameObject _gridContainer;
 		[SerializeField] private Vector2Int _gridDimensions;
 		[SerializeField] private float _gridTileSpacing = 0.3f;
@@ -46,17 +47,19 @@ namespace DB.Managers.GridManager
 		{
 			_mainCamera = Camera.main;
 			_groundPlane = new Plane(Vector3.up, Vector3.zero);
-			_buildController = GetComponent<BuildController>();
 		}
 
 		private void OnEnable()
 		{
+			_buildController = GetComponent<BuildController>();
+			_buildController.OnStateChange += HandleBuildStateChanged;
 			OnHoveredTileChange += HandleHoveredTileChange;
 		}
 
 		private void OnDisable()
 		{
 			OnHoveredTileChange -= HandleHoveredTileChange;
+			_buildController.OnStateChange -= HandleBuildStateChanged;
 		}
 
 		private void Update()
@@ -64,13 +67,6 @@ namespace DB.Managers.GridManager
 			if (_buildController.IsPlacingBuilding)
 			{
 				HandleTileHovering();
-			}
-			else
-			{
-				if (_gridTileSelector.activeSelf)
-				{
-					HandleHoveredTileChange(null);
-				}
 			}
 		}
 		
@@ -85,9 +81,19 @@ namespace DB.Managers.GridManager
 		
 		public bool IsTileEmpty(Vector2Int coordinates) => _grid[coordinates] == null;
 
-		public bool TryPlaceBuildingOnTile(Vector2Int coordinates, BuildingDefinition buildingDefinition)
+		public bool IsBuildPossible(Vector2Int coordinates)
 		{
 			if (!IsTileEmpty(coordinates))
+			{
+				return false;
+			}
+
+			return true;
+		}
+		
+		public bool TryPlaceBuildingOnTile(Vector2Int coordinates, BuildingDefinition buildingDefinition)
+		{
+			if (!IsBuildPossible(coordinates))
 			{
 				Debug.Log($"Can not place build on tile {coordinates}. Tile already occupied!");
 				return false;
@@ -118,6 +124,20 @@ namespace DB.Managers.GridManager
 					? bottomTile
 					: null,
 			};
+		}
+
+		public void UpdateGridTileSelector(bool isValidPlaceToBuild)
+		{
+			SetGridTileSelectorActive(_gridTileSelectorValid, isValidPlaceToBuild);
+			SetGridTileSelectorActive(_gridTileSelectorInvalid, !isValidPlaceToBuild);
+		}
+
+		private void HandleBuildStateChanged(ChangeStateEventData data)
+		{
+			if (data.State != BuildState.Placing)
+			{
+				HandleHoveredTileChange(null);
+			}
 		}
 
 		private bool TryGetTile(Vector2Int coordinates, out BuildingDefinition buildingDefinition)
@@ -224,19 +244,22 @@ namespace DB.Managers.GridManager
 			if (coordinates.HasValue)
 			{
 				Vector2Int hoveredTile = coordinates.Value;
+				Vector3 gridPosition = GetTilePosition(hoveredTile.x, hoveredTile.y);
+				_gridTileSelectorValid.transform.position = gridPosition;
+				_gridTileSelectorInvalid.transform.position = gridPosition;
 				if (IsTileEmpty(hoveredTile))
 				{
-					SetGridTileSelectorActive(true);
-					_gridTileSelector.transform.position = GetTilePosition(hoveredTile.x, hoveredTile.y);
+					UpdateGridTileSelector(true);
 				}
 				else
 				{
-					SetGridTileSelectorActive(false);
+					UpdateGridTileSelector(false);
 				}
 			}
 			else
 			{
-				SetGridTileSelectorActive(false);
+				SetGridTileSelectorActive(_gridTileSelectorValid, false);
+				SetGridTileSelectorActive(_gridTileSelectorInvalid, false);
 			}
 		}
 		
@@ -254,11 +277,11 @@ namespace DB.Managers.GridManager
 			return true;
 		}
 
-		private void SetGridTileSelectorActive(bool active)
+		private void SetGridTileSelectorActive(GameObject gridTileSelector, bool active)
 		{
-			if (_gridTileSelector.activeSelf != active)
+			if (gridTileSelector.activeSelf != active)
 			{
-				_gridTileSelector.SetActive(active);
+				gridTileSelector.SetActive(active);
 			}
 		}
 

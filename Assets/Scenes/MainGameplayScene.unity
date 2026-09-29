@@ -654,7 +654,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7890195914943930060, guid: f067a63456b274e71a9304ace1be4892, type: 3}
       propertyPath: _actionBindings.Array.size
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 7890195914943930060, guid: f067a63456b274e71a9304ace1be4892, type: 3}
       propertyPath: _actionBindings.Array.data[1].Id
@@ -663,6 +663,10 @@ PrefabInstance:
     - target: {fileID: 7890195914943930060, guid: f067a63456b274e71a9304ace1be4892, type: 3}
       propertyPath: _actionBindings.Array.data[2].Id
       value: 1000
+      objectReference: {fileID: 0}
+    - target: {fileID: 7890195914943930060, guid: f067a63456b274e71a9304ace1be4892, type: 3}
+      propertyPath: _actionBindings.Array.data[3].Id
+      value: 11
       objectReference: {fileID: 0}
     - target: {fileID: 7890195914943930060, guid: f067a63456b274e71a9304ace1be4892, type: 3}
       propertyPath: _actionBindings.Array.data[0].Reference
@@ -676,6 +680,10 @@ PrefabInstance:
       propertyPath: _actionBindings.Array.data[2].Reference
       value: 
       objectReference: {fileID: -6601921819237529014, guid: 803dbb7b57ac543fca0ac84fbca3f177, type: 3}
+    - target: {fileID: 7890195914943930060, guid: f067a63456b274e71a9304ace1be4892, type: 3}
+      propertyPath: _actionBindings.Array.data[3].Reference
+      value: 
+      objectReference: {fileID: 5193297929630157617, guid: 803dbb7b57ac543fca0ac84fbca3f177, type: 3}
     - target: {fileID: 7890195914943930060, guid: f067a63456b274e71a9304ace1be4892, type: 3}
       propertyPath: onBuildActionPerformed.m_PersistentCalls.m_Calls.Array.size
       value: 1

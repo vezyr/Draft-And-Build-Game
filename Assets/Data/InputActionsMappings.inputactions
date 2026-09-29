@@ -25,6 +25,16 @@
                     "interactions": "",
                     "initialStateCheck": false,
                     "priority": 0
+                },
+                {
+                    "name": "CancelBuild",
+                    "type": "Button",
+                    "id": "a77eb3d8-9a00-4c9a-b26b-86618f419c02",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false,
+                    "priority": 0
                 }
             ],
             "bindings": [
@@ -47,6 +57,28 @@
                     "processors": "",
                     "groups": ";Mouse And Keybord",
                     "action": "Build",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "8a20ffee-d793-42f7-843f-f0cefb1b9755",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Mouse And Keybord",
+                    "action": "CancelBuild",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b57a19a0-43af-4293-aa00-0f358322fd62",
+                    "path": "<Keyboard>/escape",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": ";Mouse And Keybord",
+                    "action": "CancelBuild",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

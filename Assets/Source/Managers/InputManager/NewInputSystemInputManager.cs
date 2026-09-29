@@ -17,6 +17,7 @@ namespace DB.Managers.InputManager
     public class NewInputSystemInputManager : MonoBehaviour, IInputManager
     {
         public event Action OnBuildActionPerformed;
+        public event Action OnCancelBuildActionPerformed;
         // @todo: Move it to dedicated CheatManager
         public event Action OnCheatBuildHouseActionPerformed;
         
@@ -40,6 +41,9 @@ namespace DB.Managers.InputManager
         {
             if (_actions.TryGetValue(ActionId.Build, out var buildActionReference))
                 buildActionReference.action.performed += InvokeOnBuildActionPerformed;
+            
+            if (_actions.TryGetValue(ActionId.CancelBuild, out var cancelBuildActionReference))
+                cancelBuildActionReference.action.performed += InvokeOnCancelBuildActionPerformed;
 
             if (_actions.TryGetValue(ActionId.CheatBuildHouse, out var cheatBuildHouseActionReference))
                 cheatBuildHouseActionReference.action.performed += InvokeOnCheatBuildHouseActionPerformed;
@@ -49,6 +53,9 @@ namespace DB.Managers.InputManager
         {
             if (_actions.TryGetValue(ActionId.Build, out var buildActionReference))
                 buildActionReference.action.performed -= InvokeOnBuildActionPerformed;
+            
+            if (_actions.TryGetValue(ActionId.CancelBuild, out var cancelBuildActionReference))
+                cancelBuildActionReference.action.performed -= InvokeOnCancelBuildActionPerformed;
 
             if (_actions.TryGetValue(ActionId.CheatBuildHouse, out var cheatBuildHouseActionReference))
                 cheatBuildHouseActionReference.action.performed -= InvokeOnCheatBuildHouseActionPerformed;
@@ -89,6 +96,11 @@ namespace DB.Managers.InputManager
         private void InvokeOnCheatBuildHouseActionPerformed(InputAction.CallbackContext context)
         {
             OnCheatBuildHouseActionPerformed?.Invoke();
+        }
+
+        private void InvokeOnCancelBuildActionPerformed(InputAction.CallbackContext context)
+        {
+            OnCancelBuildActionPerformed?.Invoke();
         }
     }
 }

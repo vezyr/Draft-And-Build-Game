@@ -32,6 +32,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 5813791092850115102}
+  - {fileID: 2495655512145010680}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6505008370715974550
@@ -47,7 +48,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DridManager
   _gridTilePrefab: {fileID: 0}
-  _gridTileSelector: {fileID: 7947725680788502003}
+  _gridTileSelectorValid: {fileID: 7947725680788502003}
+  _gridTileSelectorInvalid: {fileID: 2037627184338348053}
   _gridContainer: {fileID: 0}
   _gridDimensions: {x: 0, y: 0}
   _gridTileSpacing: 0.3
@@ -63,6 +65,77 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d89c2567bbb8f4b8a9685f794dc8a0e4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DB.Managers.GridManager.BuildController
+--- !u!1001 &3204750226549747021
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 1830398496947339706}
+    m_Modifications:
+    - target: {fileID: 1070684832784167605, guid: c56ad039b27c64974be900e4bcbf9c41, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0.08679962
+      objectReference: {fileID: 0}
+    - target: {fileID: 1070684832784167605, guid: c56ad039b27c64974be900e4bcbf9c41, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1070684832784167605, guid: c56ad039b27c64974be900e4bcbf9c41, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -1.4166
+      objectReference: {fileID: 0}
+    - target: {fileID: 1070684832784167605, guid: c56ad039b27c64974be900e4bcbf9c41, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1070684832784167605, guid: c56ad039b27c64974be900e4bcbf9c41, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1070684832784167605, guid: c56ad039b27c64974be900e4bcbf9c41, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1070684832784167605, guid: c56ad039b27c64974be900e4bcbf9c41, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1070684832784167605, guid: c56ad039b27c64974be900e4bcbf9c41, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1070684832784167605, guid: c56ad039b27c64974be900e4bcbf9c41, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1070684832784167605, guid: c56ad039b27c64974be900e4bcbf9c41, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3476379210400073048, guid: c56ad039b27c64974be900e4bcbf9c41, type: 3}
+      propertyPath: m_Name
+      value: GridTileHoverSelectorInvalid
+      objectReference: {fileID: 0}
+    - target: {fileID: 3476379210400073048, guid: c56ad039b27c64974be900e4bcbf9c41, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: c56ad039b27c64974be900e4bcbf9c41, type: 3}
+--- !u!1 &2037627184338348053 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 3476379210400073048, guid: c56ad039b27c64974be900e4bcbf9c41, type: 3}
+  m_PrefabInstance: {fileID: 3204750226549747021}
+  m_PrefabAsset: {fileID: 0}
+--- !u!4 &2495655512145010680 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1070684832784167605, guid: c56ad039b27c64974be900e4bcbf9c41, type: 3}
+  m_PrefabInstance: {fileID: 3204750226549747021}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &8264073160559615292
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -73,7 +146,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2081820422669281487, guid: e78aa7f6f734347e6be34a188cd8d7b0, type: 3}
       propertyPath: m_Name
-      value: GridTileHoverSelector
+      value: GridTileHoverSelectorValid
       objectReference: {fileID: 0}
     - target: {fileID: 2081820422669281487, guid: e78aa7f6f734347e6be34a188cd8d7b0, type: 3}
       propertyPath: m_IsActive

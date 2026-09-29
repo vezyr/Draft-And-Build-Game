@@ -15,3 +15,5 @@ MonoBehaviour:
   DisplayName: Mine
   BaseScore: 8
   GameObjectPrefab: {fileID: 5827850005665443873, guid: ff539191c8f974cee8a2bf4a1a21af2f, type: 3}
+  Conditions:
+  - {fileID: 11400000, guid: 05e79df8524cf4cc993a1c1b57588cae, type: 2}

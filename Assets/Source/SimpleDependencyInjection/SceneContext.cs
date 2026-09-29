@@ -30,7 +30,7 @@ namespace DB.DependencyInjection
             }
         }
 
-        private void Start()
+        private void OnEnable()
         {
             Dictionary<Type, List<MethodInfo>> methodsCache = new Dictionary<Type, List<MethodInfo>>();
             Object[] instances = UnityEngine.Object.FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Exclude, FindObjectsSortMode.None);

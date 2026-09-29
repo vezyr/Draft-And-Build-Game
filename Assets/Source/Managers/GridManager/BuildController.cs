@@ -1,10 +1,10 @@
 using System;
 using DB.Controllers;
 using DB.Data;
+using DB.Data.BuildingConditions;
 using DB.DependencyInjection.Attributes;
 using DB.Managers.InputManager;
 using DB.Managers.ScoreManager;
-using Unity.VisualScripting;
 using UnityEngine;
 
 namespace DB.Managers.GridManager
@@ -15,6 +15,7 @@ namespace DB.Managers.GridManager
         Idle,
         Placing,
         Build,
+        CancelBuild,
     }
 
     public struct ChangeStateEventData
@@ -62,11 +63,13 @@ namespace DB.Managers.GridManager
         private void OnEnable()
         {
             RegisterOnBuildActionPerformedListener();
+            RegisterOnCancelBuildActionPerformedListener();
         }
 
         private void OnDisable()
         {
             UnregisterOnBuildActionPerformedListener();
+            UnregisterOnCancelBuildActionPerformedListener();
         }
 
         public bool IsPlacingBuilding => _buildState == BuildState.Placing;
@@ -93,7 +96,7 @@ namespace DB.Managers.GridManager
             switch (newState)
             {
                 case BuildState.Idle:
-                    if (_buildState is BuildState.Build or BuildState.Unknown)
+                    if (_buildState is BuildState.CancelBuild or BuildState.Build or BuildState.Unknown)
                     {
                         OnStateChangeToIdle();
                     } 
@@ -110,6 +113,12 @@ namespace DB.Managers.GridManager
                         OnStateChangeToBuild();
                     }
                     break;
+                case BuildState.CancelBuild:
+                    if (_buildState == BuildState.Placing)
+                    {
+                        OnStateChangeToCancelBuild();
+                    }
+                    break;
             }
         }
 
@@ -119,13 +128,11 @@ namespace DB.Managers.GridManager
             _selectedBuildingGameObject = null;
             _scoreCalculationResult = null;
 
-            if (_deckManager == null)
-            {
-                throw new Exception("Deck manager is not set up.");
-            }
+            ValidateInjectedManagers();
             
             _buildState = BuildState.Idle;
             _inputManager.DisableAction(ActionId.Build);
+            _inputManager.DisableAction(ActionId.CancelBuild);
 
             BuildingDefinition[] possibleBuildings =
                 _gridManager.NumberOfFreeTiles() > 0 ? _deckManager.GetPossibleBuildings() : Array.Empty<BuildingDefinition>();
@@ -138,8 +145,11 @@ namespace DB.Managers.GridManager
             _selectedBuildingGameObject = building.GetComponent<BuildingController>();
             HideSelectedBuilding();
             
+            ValidateInjectedManagers();
+            
             _buildState = BuildState.Placing;
             _inputManager.EnableAction(ActionId.Build);
+            _inputManager.EnableAction(ActionId.CancelBuild);
             
             OnStateChange?.Invoke(new ChangeStateEventData(_buildState, null));
         }
@@ -158,19 +168,22 @@ namespace DB.Managers.GridManager
             _buildState = BuildState.Build;
             OnStateChange?.Invoke(new ChangeStateEventData(_buildState, null));
             
-            if (_deckManager == null)
-            {
-                throw new Exception("Deck manager is not set up.");
-            }
-
-            if (_scoreManager == null)
-            {
-                throw new Exception("Score manager is not set up.");
-            }
+            ValidateInjectedManagers();
+            
             _deckManager.HandleBuildingPlaced(_selectedBuilding);
             _scoreManager.AddPointsToScore(_scoreCalculationResult?.TotalScore ?? 0);
             _selectedBuildingGameObject.ClearDisplayedScores();
             
+            ChangeState(BuildState.Idle);
+        }
+
+        private void OnStateChangeToCancelBuild()
+        {
+            _buildState = BuildState.CancelBuild;
+            if (_selectedBuildingGameObject != null)
+            {
+                Destroy(_selectedBuildingGameObject.gameObject);
+            }
             ChangeState(BuildState.Idle);
         }
 
@@ -192,6 +205,11 @@ namespace DB.Managers.GridManager
 
         private void UpdateHoveredTile(Vector2Int hoveredTileCoordinates)
         {
+            BuildingConditionContext buildingConditionContext = new BuildingConditionContext(
+                hoveredTileCoordinates, _gridManager.GetNeighborhood(hoveredTileCoordinates));
+            _gridManager.UpdateGridTileSelector(_gridManager.IsBuildPossible(hoveredTileCoordinates) &&
+                                                _selectedBuilding.AreAllMet(buildingConditionContext));
+            
             if (!_gridManager.IsTileEmpty(hoveredTileCoordinates))
             {
                 HideSelectedBuilding();
@@ -203,10 +221,7 @@ namespace DB.Managers.GridManager
             _selectedBuildingGameObject.transform.position = tilePosition;
             _selectedBuildingGameObject.gameObject.SetActive(true);
 
-            if (_scoreManager is null)
-            {
-                throw new Exception("Score manager is not set up.");
-            }
+            ValidateInjectedManagers();
 
             Neighborhood neighborhood = _gridManager.GetNeighborhood(hoveredTileCoordinates);
             _scoreCalculationResult = _scoreManager.CalculateNeighborhoodScore(_selectedBuilding, neighborhood);
@@ -221,12 +236,37 @@ namespace DB.Managers.GridManager
         
         private void HandleBuild()
         {
+            if (_buildState != BuildState.Placing) return;
+            ValidateInjectedManagers();
+            
+            Vector2Int? hoveredTileCoordinates = _gridManager.HoveredTileCoordinates;
+            if (!hoveredTileCoordinates.HasValue)
+            {
+                Debug.Log("Cannot build without a hovered tile.");
+                return;
+            }
+
+            BuildingConditionContext buildingConditionContext = new BuildingConditionContext(
+                hoveredTileCoordinates.Value, _gridManager.GetNeighborhood(hoveredTileCoordinates.Value));
+            if (!_gridManager.IsBuildPossible(hoveredTileCoordinates.Value) || !_selectedBuilding.AreAllMet(buildingConditionContext))
+            {
+                Debug.Log("Cannot build on this tile. The tile is already taken or building conditions aren't met.");
+                return;
+            }
             ChangeState(BuildState.Build);
+        }
+
+        private void HandleCancelBuild()
+        {
+            if (_buildState != BuildState.Placing) return;
+            ValidateInjectedManagers();
+            
+            ChangeState(BuildState.CancelBuild);
         }
 
         private void RegisterOnBuildActionPerformedListener()
         {
-            if (_inputManager == null)
+            if (_inputManager is null)
             {
                 Debug.Log("Input manager not found.");
                 return;
@@ -238,7 +278,7 @@ namespace DB.Managers.GridManager
 
         private void UnregisterOnBuildActionPerformedListener()
         {
-            if (_inputManager == null)
+            if (_inputManager is null)
             {
                 Debug.Log("Input manager not found.");
                 return;
@@ -246,12 +286,41 @@ namespace DB.Managers.GridManager
             
             _inputManager.OnBuildActionPerformed -= HandleBuild;
         }
+
+        private void RegisterOnCancelBuildActionPerformedListener()
+        {
+            if (_inputManager is null)
+            {
+                Debug.Log("Input manager not found.");
+                return;
+            }
+            
+            _inputManager.OnCancelBuildActionPerformed -= HandleCancelBuild;
+            _inputManager.OnCancelBuildActionPerformed += HandleCancelBuild;
+        }
+
+        private void UnregisterOnCancelBuildActionPerformedListener()
+        {
+            if (_inputManager is null)
+            {
+                Debug.Log("Input manager not found.");
+                return;
+            }
+            
+            _inputManager.OnCancelBuildActionPerformed -= HandleCancelBuild;
+        }
+
+        private void ValidateInjectedManagers()
+        {
+            if (_deckManager is null) throw new Exception("Deck manager is not set up.");
+            if (_inputManager is null) throw new Exception("Input manager is not set up.");
+            if (_scoreManager is null) throw new Exception("Score manager is not set up.");
+        }
         
         [Inject(componentType:typeof(NewInputSystemInputManager))]
         private void SetInputManager(IInputManager inputManager)
         {
             _inputManager = inputManager;
-            RegisterOnBuildActionPerformedListener();
         }
 
         [Inject(componentType:typeof(DeckManager.DeckManager))]

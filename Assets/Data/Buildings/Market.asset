@@ -15,3 +15,5 @@ MonoBehaviour:
   DisplayName: Market
   BaseScore: 0
   GameObjectPrefab: {fileID: 5406353029407200418, guid: 6d0aaaad0a6fc40f399366c11ee655aa, type: 3}
+  Conditions:
+  - {fileID: 11400000, guid: 6ed7d76fc8f224ff2a74a1217b084cdc, type: 2}
