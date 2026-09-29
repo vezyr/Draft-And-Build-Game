@@ -1,8 +1,7 @@
-using System;
 using DB.Data;
 using UnityEditor;
 using UnityEngine;
-using UnityEngine.UIElements;
+using Object = UnityEngine.Object;
 
 namespace DB.Editor.Data
 {
@@ -50,8 +49,9 @@ namespace DB.Editor.Data
             GUILayout.Label("v To build / Neighbour >", GUILayout.Width(_labelWidth));
             for (int i = 0; i < _buildingsProperty.arraySize; i++)
             {
+                Object obj = _buildingsProperty.GetArrayElementAtIndex(i).objectReferenceValue;
                 GUILayout.Label(
-                    _buildingsProperty.GetArrayElementAtIndex(i).objectReferenceValue.name, 
+                    obj != null ? obj.name : "<Empty>", 
                     GUILayout.Width(_cellWidth)
                 );
             }
@@ -60,8 +60,9 @@ namespace DB.Editor.Data
             for (int i = 0; i < _buildingsProperty.arraySize; i++)
             {
                 EditorGUILayout.BeginHorizontal();
+                Object obj = _buildingsProperty.GetArrayElementAtIndex(i).objectReferenceValue;
                 GUILayout.Label(
-                    _buildingsProperty.GetArrayElementAtIndex(i).objectReferenceValue.name, 
+                    obj != null ? obj.name : "<Empty>", 
                     _labelStyle, 
                     GUILayout.Width(_labelWidth)
                 );
