@@ -10,6 +10,10 @@ It was never ment to be a complete, production ready game.
 
 ---
 
+https://github.com/user-attachments/assets/6bca1dd4-84c5-41d8-be02-6759b2aabfbf
+
+---
+
 ## 1. Core Gameplay Loop
 
 The player expands a small settlement through a "drafting" mechanic. The game heavily relies on spatial relationships and optimizing layout on a constrained grid.
