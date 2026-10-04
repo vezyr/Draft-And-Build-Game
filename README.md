@@ -10,7 +10,7 @@ It was never ment to be a complete, production ready game.
 
 ---
 
-https://github.com/user-attachments/assets/6bca1dd4-84c5-41d8-be02-6759b2aabfbf
+https://github.com/user-attachments/assets/0f93c3d5-40d7-4786-8a0c-42c32a3b2565
 
 ---
 
