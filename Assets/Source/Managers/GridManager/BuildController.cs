@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using DB.Controllers;
 using DB.Data;
 using DB.Data.BuildingConditions;
@@ -29,12 +30,41 @@ namespace DB.Managers.GridManager
             PossibleBuildings = possibleBuildings;
         }
     }
+
+    readonly struct Transition : IEquatable<Transition>
+    {
+        public readonly BuildState From;
+        public readonly BuildState To;
+
+        public Transition(BuildState to, BuildState from)
+        {
+            From = from;
+            To = to;
+        }
+
+        public bool Equals(Transition other)
+        {
+            return From == other.From && To == other.To;
+        }
+
+        public override bool Equals(object obj)
+        {
+            return obj is Transition other && Equals(other);
+        }
+
+        public override int GetHashCode()
+        {
+            return HashCode.Combine((int)From, (int)To);
+        }
+    }
     
     [Injectable]
     [RequireComponent(typeof(GridManager))]
     public class BuildController : MonoBehaviour
     {
         public Action<ChangeStateEventData> OnStateChange;
+
+        private readonly Dictionary<Transition, Action> _transitions = new Dictionary<Transition, Action>();
         
         private GridManager _gridManager;
         private IInputManager _inputManager;
@@ -48,6 +78,16 @@ namespace DB.Managers.GridManager
 
         private NeighborhoodScoreCalculationResult? _scoreCalculationResult = null;
 
+        private void Awake()
+        {
+            _transitions.Add(new Transition(BuildState.Idle, BuildState.Unknown), OnStateChangeToIdle);
+            _transitions.Add(new Transition(BuildState.Idle, BuildState.Build), OnStateChangeToIdle);
+            _transitions.Add(new Transition(BuildState.Idle, BuildState.CancelBuild), OnStateChangeToIdle);
+            _transitions.Add(new Transition(BuildState.Placing, BuildState.Idle), OnStateChangeToPlacing);
+            _transitions.Add(new Transition(BuildState.Build, BuildState.Placing), OnStateChangeToBuild);
+            _transitions.Add(new Transition(BuildState.CancelBuild, BuildState.Placing), OnStateChangeToCancelBuild);
+        }
+        
         private void Start()
         {
             _gridManager = GetComponent<GridManager>();
@@ -93,33 +133,13 @@ namespace DB.Managers.GridManager
                 return;
             }
 
-            switch (newState)
+            if (!_transitions.TryGetValue(new Transition(newState, _buildState), out var transitionAction))
             {
-                case BuildState.Idle:
-                    if (_buildState is BuildState.CancelBuild or BuildState.Build or BuildState.Unknown)
-                    {
-                        OnStateChangeToIdle();
-                    } 
-                    break;
-                case BuildState.Placing:
-                    if (_buildState == BuildState.Idle)
-                    {
-                        OnStateChangeToPlacing();
-                    }
-                    break;
-                case BuildState.Build:
-                    if (_buildState == BuildState.Placing)
-                    {
-                        OnStateChangeToBuild();
-                    }
-                    break;
-                case BuildState.CancelBuild:
-                    if (_buildState == BuildState.Placing)
-                    {
-                        OnStateChangeToCancelBuild();
-                    }
-                    break;
+                Debug.LogWarning($"No transition registered for state change from {_buildState} to {newState}.");
+                return;
             }
+
+            transitionAction.Invoke();
         }
 
         private void OnStateChangeToIdle()
